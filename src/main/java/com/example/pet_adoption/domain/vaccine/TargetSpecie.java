@@ -1,13 +1,13 @@
 package com.example.pet_adoption.domain.vaccine;
 
-public enum TargetSpecies {
+public enum TargetSpecie {
     DOG("Cachorro"),
     CAT("Gato"),
     BOTH("Ambos");
 
     private final String displayName;
 
-    TargetSpecies(String displayName){
+    TargetSpecie(String displayName){
         this.displayName = displayName;
     }
 

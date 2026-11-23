@@ -2,15 +2,20 @@ package com.example.pet_adoption.domain.accounts;
 
 import com.example.pet_adoption.domain.address.Address;
 import jakarta.persistence.*;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "shelters")
 public class Shelter extends Publisher {
+
+    @Column(name = "shelter_name", nullable = false)
+    private String shelterName;
+
+    @Column(nullable = false, updatable = false, length = 14)
+    private String cnpj;
 
     @ElementCollection
     @CollectionTable(
@@ -31,9 +36,20 @@ public class Shelter extends Publisher {
 
     protected Shelter(){}
 
-    public Shelter(String email, String phone, Address address, List<String> photoUrls) {
-        super(email, phone, address);
+    public Shelter(String email, String password, String phone, Address address,
+                   String shelterName, String cnpj, List<String> photoUrls) {
+        super(email, password, phone, address);
+        this.shelterName = shelterName;
+        this.cnpj = cnpj;
         this.photoUrls = photoUrls;
+    }
+
+    public String getShelterName() {
+        return shelterName;
+    }
+
+    public String getCnpj() {
+        return cnpj;
     }
 
     public List<String> getPhotoUrls() {

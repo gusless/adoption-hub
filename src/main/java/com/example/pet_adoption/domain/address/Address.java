@@ -8,7 +8,7 @@ import java.util.List;
 @Embeddable
 public class Address {
 
-    @Column(name = "cep", length = 7, nullable = false)
+    @Column(name = "cep", length = 8, nullable = false)
     private String cep;
 
     @Column(name = "state", length = 2, nullable = false)

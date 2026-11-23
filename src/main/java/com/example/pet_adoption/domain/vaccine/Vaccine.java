@@ -1,6 +1,9 @@
 package com.example.pet_adoption.domain.vaccine;
 
+import com.example.pet_adoption.domain.vaccine.dto.DtoNewVaccine;
+import com.example.pet_adoption.domain.vaccine.dto.DtoUpdateVaccine;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 
 @Entity
 @Table(name = "vaccines")
@@ -15,13 +18,23 @@ public class Vaccine{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_specie", nullable = false)
-    private TargetSpecies targetSpecies;
+    private TargetSpecie targetSpecie;
 
     protected Vaccine(){}
 
-    public Vaccine(String name, TargetSpecies targetSpecies) {
+    public Vaccine(String name, TargetSpecie targetSpecie) {
         this.name = name;
-        this.targetSpecies = targetSpecies;
+        this.targetSpecie = targetSpecie;
+    }
+
+    public Vaccine(DtoNewVaccine newVaccine) {
+        this.name = newVaccine.name();
+        this.targetSpecie = newVaccine.targetSpecie();
+    }
+
+    public void updateInfos(@Valid DtoUpdateVaccine vaccineUpdated) {
+        this.name = vaccineUpdated.name();
+        this.targetSpecie = getTargetSpecie();
     }
 
     public Long getId() {
@@ -32,7 +45,9 @@ public class Vaccine{
         return name;
     }
 
-    public TargetSpecies getTargetSpecies() {
-        return targetSpecies;
+    public TargetSpecie getTargetSpecie() {
+        return targetSpecie;
     }
+
+
 }

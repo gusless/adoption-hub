@@ -4,11 +4,10 @@ import com.example.pet_adoption.domain.address.Address;
 import com.example.pet_adoption.domain.adoption.Adoption;
 import com.example.pet_adoption.domain.pet.pet_enums.*;
 import com.example.pet_adoption.domain.vaccine.PetVaccine;
-import com.example.pet_adoption.domain.vaccine.TargetSpecies;
+import com.example.pet_adoption.domain.vaccine.TargetSpecie;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,8 +45,8 @@ public class Cat extends Pet{
     }
 
     @Override
-    public TargetSpecies getTargetSpecies() {
-        return TargetSpecies.CAT;
+    public TargetSpecie getTargetSpecies() {
+        return TargetSpecie.CAT;
     }
 
     public CatBreed getBreed() {

@@ -7,7 +7,7 @@ import com.example.pet_adoption.domain.pet.pet_enums.Castration;
 import com.example.pet_adoption.domain.pet.pet_enums.GeneralTraits;
 import com.example.pet_adoption.domain.pet.pet_enums.PetGenre;
 import com.example.pet_adoption.domain.vaccine.PetVaccine;
-import com.example.pet_adoption.domain.vaccine.TargetSpecies;
+import com.example.pet_adoption.domain.vaccine.TargetSpecie;
 import com.example.pet_adoption.domain.vaccine.Vaccine;
 import jakarta.persistence.*;
 
@@ -112,13 +112,13 @@ public abstract class Pet {
         this.photoUrls.add(url);
     }
 
-    public abstract TargetSpecies getTargetSpecies();
+    public abstract TargetSpecie getTargetSpecies();
 
     public void AddVaccination(
             Vaccine vaccine, LocalDate appliedAt, LocalDate nextDoseAt
     ){
-        if (vaccine.getTargetSpecies() != this.getTargetSpecies()
-        && vaccine.getTargetSpecies() != TargetSpecies.BOTH){
+        if (vaccine.getTargetSpecie() != this.getTargetSpecies()
+        && vaccine.getTargetSpecie() != TargetSpecie.BOTH){
             throw new IllegalArgumentException(
                     "A vacina " + vaccine.getName() + " não é compatível com "
                     + this.getTargetSpecies().getDisplayName().toLowerCase() + "s."

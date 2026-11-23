@@ -3,33 +3,72 @@ package com.example.pet_adoption.domain.accounts;
 import com.example.pet_adoption.domain.address.Address;
 import com.example.pet_adoption.domain.adoption.Adoption;
 import jakarta.persistence.*;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Publisher {
+@Inheritance(strategy = InheritanceType.JOINED)
+@NullMarked
+public abstract class Publisher implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @OneToMany(mappedBy = "publisher")
-    private final Set<Adoption> adoptions = new HashSet<>();
+    protected final Set<Adoption> adoptions = new HashSet<>();
 
-    private String email;
+    @Column(nullable = false)
+    protected String email;
 
-    private String phone;
+    @Column(nullable = false)
+    private String password;
+
+    private boolean active = true;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
+    @Column(nullable = false, length = 11)
+    protected String phone;
 
     @Embedded
-    private Address address;
+    protected Address address;
 
     protected Publisher(){}
 
-    public Publisher(String email, String phone, Address address) {
+    public Publisher(String email, String password, String phone, Address address) {
         this.email = email;
+        this.password = password;
         this.phone = phone;
         this.address = address;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return active;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     public Long getId() {
