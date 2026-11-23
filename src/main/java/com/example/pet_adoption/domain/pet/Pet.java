@@ -3,15 +3,17 @@ package com.example.pet_adoption.domain.pet;
 import com.example.pet_adoption.domain.address.Address;
 import com.example.pet_adoption.domain.adoption.Adoption;
 import com.example.pet_adoption.domain.pet.pet_enums.Castration;
-import com.example.pet_adoption.domain.pet.pet_enums.CatTraits;
 import com.example.pet_adoption.domain.pet.pet_enums.GeneralTraits;
+import com.example.pet_adoption.domain.vaccine.PetVaccine;
+import com.example.pet_adoption.domain.vaccine.TargetSpecies;
 import com.example.pet_adoption.domain.vaccine.Vaccine;
 import jakarta.persistence.*;
 
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -46,27 +48,30 @@ public abstract class Pet {
     @Column(name = "trait")
     private Set<GeneralTraits> generalTraits = new HashSet<>();
 
-    @OneToOne
-    @JoinColumn(name = "address_id", nullable = false)
+    @Embedded
     private Address address;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "adoption_id", nullable = false)
     private Adoption adoption;
 
-    @ManyToMany
-    @JoinTable(
-            name = "pet_vaccine",
-            joinColumns = @JoinColumn(name = "pet_id"),
-            inverseJoinColumns = @JoinColumn(name = "vaccine_id")
-    )
-    private Set<Vaccine> vaccines = new HashSet<>();
+    @OneToMany()
+    private List<PetVaccine> vaccinations = new ArrayList<>();
 
-    public Pet(){}
+    @ElementCollection
+    @CollectionTable(
+            name = "pet_photos",
+            joinColumns = @JoinColumn(name = "pet_id")
+    )
+    @OrderColumn(name = "display_order")
+    @Column(name = "url", nullable = false, length = 500)
+    private List<String> photoUrls = new ArrayList<>();
+
+    protected Pet(){}
 
     public Pet(String name, String description, Float weight, LocalDate birth,
                boolean estimatedBirth, Castration castration, Set<GeneralTraits> generalTraits,
-               Address address, Set<Vaccine> vaccines) {
+               Address address, ArrayList<PetVaccine> vaccinations, List<String> photoUrls) {
         this.name = name;
         this.description = description;
         this.weight = weight;
@@ -75,15 +80,43 @@ public abstract class Pet {
         this.castration = castration;
         this.generalTraits = generalTraits;
         this.address = address;
-        this.vaccines = vaccines;
+        this.vaccinations = vaccinations;
+        this.photoUrls = photoUrls;
     }
 
     @Transient
     public Period getAge(){
         if (this.birth == null){
-            throw new RuntimeException("A idade não pode ser vazia");
+            throw new NullPointerException("A idade não pode ser vazia");
         }
         return Period.between(birth, LocalDate.now());
+    }
+
+    public void AddPhotoUrl(String url){
+        if (this.photoUrls.size() >= 10){
+            throw new IllegalStateException("Limite máximo de 10 fotos por pet excedido");
+        }
+        this.photoUrls.add(url);
+    }
+
+    public abstract TargetSpecies getTargetSpecies();
+
+    public void AddVaccination(
+            Vaccine vaccine, LocalDate appliedAt, LocalDate nextDoseAt
+    ){
+        if (vaccine.getTargetSpecies() != this.getTargetSpecies()
+        && vaccine.getTargetSpecies() != TargetSpecies.BOTH){
+            throw new IllegalArgumentException(
+                    "A vacina " + vaccine.getName() + " não é compatível com "
+                    + this.getTargetSpecies().getDisplayName() + "s."
+            );
+        }
+        this.vaccinations.add(new PetVaccine(this, vaccine, appliedAt, nextDoseAt));
+    }
+
+    public void removeVaccination(PetVaccine vaccination){
+        this.vaccinations.remove(vaccination);
+        vaccination.setPet(null);
     }
 
     public Long getId() {
@@ -126,8 +159,8 @@ public abstract class Pet {
         return adoption;
     }
 
-    public Set<Vaccine> getVaccines() {
-        return vaccines;
+    public List<PetVaccine> getVaccination() {
+        return vaccinations;
     }
 }
 

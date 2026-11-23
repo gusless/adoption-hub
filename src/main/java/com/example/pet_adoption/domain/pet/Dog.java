@@ -5,11 +5,14 @@ import com.example.pet_adoption.domain.pet.pet_enums.Castration;
 import com.example.pet_adoption.domain.pet.pet_enums.DogBreed;
 import com.example.pet_adoption.domain.pet.pet_enums.DogTraits;
 import com.example.pet_adoption.domain.pet.pet_enums.GeneralTraits;
-import com.example.pet_adoption.domain.vaccine.Vaccine;
+import com.example.pet_adoption.domain.vaccine.PetVaccine;
+import com.example.pet_adoption.domain.vaccine.TargetSpecies;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -28,20 +31,25 @@ public class Dog extends Pet {
     @Column(name = "trait")
     private Set<DogTraits> dogTraits = new HashSet<>();
 
-    public Dog(){}
+    protected Dog(){}
 
     public Dog(
             String name, String description, Float weight, LocalDate birth,
             boolean estimatedBirth, Castration castration, Set<GeneralTraits> generalTraits,
-            Address address, Set<Vaccine> vaccines,
+            Address address, ArrayList<PetVaccine> vaccinations, List<String> photoUrls,
             DogBreed breed, Set<DogTraits> dogTraits
     ) {
         super(
                 name, description, weight, birth, estimatedBirth,
-                castration, generalTraits, address, vaccines
+                castration, generalTraits, address, vaccinations, photoUrls
         );
         this.breed = breed;
         this.dogTraits = dogTraits;
+    }
+
+    @Override
+    public TargetSpecies getTargetSpecies() {
+        return TargetSpecies.DOG;
     }
 
     public DogBreed getBreed() {
