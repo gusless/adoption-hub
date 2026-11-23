@@ -1,9 +1,11 @@
 package com.example.pet_adoption.domain.pet;
 
+import com.example.pet_adoption.domain.accounts.User;
 import com.example.pet_adoption.domain.address.Address;
 import com.example.pet_adoption.domain.adoption.Adoption;
 import com.example.pet_adoption.domain.pet.pet_enums.Castration;
 import com.example.pet_adoption.domain.pet.pet_enums.GeneralTraits;
+import com.example.pet_adoption.domain.pet.pet_enums.PetGenre;
 import com.example.pet_adoption.domain.vaccine.PetVaccine;
 import com.example.pet_adoption.domain.vaccine.TargetSpecies;
 import com.example.pet_adoption.domain.vaccine.Vaccine;
@@ -37,6 +39,9 @@ public abstract class Pet {
     private boolean estimatedBirth;
 
     @Enumerated(EnumType.STRING)
+    private PetGenre genre;
+
+    @Enumerated(EnumType.STRING)
     private Castration castration;
 
     @ElementCollection
@@ -55,7 +60,7 @@ public abstract class Pet {
     @JoinColumn(name = "adoption_id", nullable = false)
     private Adoption adoption;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetVaccine> vaccinations = new ArrayList<>();
 
     @ElementCollection
@@ -67,19 +72,27 @@ public abstract class Pet {
     @Column(name = "url", nullable = false, length = 500)
     private List<String> photoUrls = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adopter_id")
+    private User adopter;
+
     protected Pet(){}
 
-    public Pet(String name, String description, Float weight, LocalDate birth,
-               boolean estimatedBirth, Castration castration, Set<GeneralTraits> generalTraits,
-               Address address, ArrayList<PetVaccine> vaccinations, List<String> photoUrls) {
+    public Pet(
+            String name, String description, Float weight, LocalDate birth,
+            boolean estimatedBirth, PetGenre genre, Castration castration,
+            Set<GeneralTraits> generalTraits, Address address, Adoption adoption,
+            List<PetVaccine> vaccinations, List<String> photoUrls) {
         this.name = name;
         this.description = description;
         this.weight = weight;
         this.birth = birth;
         this.estimatedBirth = estimatedBirth;
+        this.genre = genre;
         this.castration = castration;
         this.generalTraits = generalTraits;
         this.address = address;
+        this.adoption = adoption;
         this.vaccinations = vaccinations;
         this.photoUrls = photoUrls;
     }
@@ -108,7 +121,7 @@ public abstract class Pet {
         && vaccine.getTargetSpecies() != TargetSpecies.BOTH){
             throw new IllegalArgumentException(
                     "A vacina " + vaccine.getName() + " não é compatível com "
-                    + this.getTargetSpecies().getDisplayName() + "s."
+                    + this.getTargetSpecies().getDisplayName().toLowerCase() + "s."
             );
         }
         this.vaccinations.add(new PetVaccine(this, vaccine, appliedAt, nextDoseAt));
@@ -143,6 +156,10 @@ public abstract class Pet {
         return estimatedBirth;
     }
 
+    public PetGenre getGenre() {
+        return genre;
+    }
+
     public Castration getCastration() {
         return castration;
     }
@@ -161,6 +178,10 @@ public abstract class Pet {
 
     public List<PetVaccine> getVaccination() {
         return vaccinations;
+    }
+
+    public User getAdopter() {
+        return adopter;
     }
 }
 

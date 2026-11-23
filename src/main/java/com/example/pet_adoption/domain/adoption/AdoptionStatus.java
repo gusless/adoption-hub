@@ -2,8 +2,9 @@ package com.example.pet_adoption.domain.adoption;
 
 public enum AdoptionStatus {
     UP_FOR_ADOPTION("Para adoção"),
-    ADOPTION_IN_PROGRESS("Adoção em progresso"),
-    ADOPTED("Adotado");
+    IN_PROGRESS("Adoção em progresso"),
+    ADOPTED("Adotado"),
+    CANCELED("Adoção Cancelada");
 
     private final String displayName;
 

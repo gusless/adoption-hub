@@ -1,10 +1,8 @@
 package com.example.pet_adoption.domain.pet;
 
 import com.example.pet_adoption.domain.address.Address;
-import com.example.pet_adoption.domain.pet.pet_enums.Castration;
-import com.example.pet_adoption.domain.pet.pet_enums.CatBreed;
-import com.example.pet_adoption.domain.pet.pet_enums.CatTraits;
-import com.example.pet_adoption.domain.pet.pet_enums.GeneralTraits;
+import com.example.pet_adoption.domain.adoption.Adoption;
+import com.example.pet_adoption.domain.pet.pet_enums.*;
 import com.example.pet_adoption.domain.vaccine.PetVaccine;
 import com.example.pet_adoption.domain.vaccine.TargetSpecies;
 import jakarta.persistence.*;
@@ -35,15 +33,14 @@ public class Cat extends Pet{
 
     public Cat(
             String name, String description, Float weight, LocalDate birth,
-            boolean estimatedBirth, Castration castration, Set<GeneralTraits> generalTraits,
-            Address address, ArrayList<PetVaccine> vaccinations, List<String> photoUrls,
-            CatBreed breed, Set<CatTraits> catTraits
-    ) {
+            boolean estimatedBirth, PetGenre genre, Castration castration,
+            Set<GeneralTraits> generalTraits, Address address, Adoption adoption,
+            List<PetVaccine> vaccinations, List<String> photoUrls, CatBreed breed,
+            Set<CatTraits> catTraits) {
         super(
-                name, description, weight, birth,
-                estimatedBirth, castration, generalTraits,
-                address, vaccinations, photoUrls
-        );
+                name, description, weight, birth, estimatedBirth,
+                genre, castration, generalTraits, address, adoption,
+                vaccinations, photoUrls);
         this.breed = breed;
         this.catTraits = catTraits;
     }
