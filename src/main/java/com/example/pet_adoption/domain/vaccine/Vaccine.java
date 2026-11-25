@@ -1,7 +1,7 @@
 package com.example.pet_adoption.domain.vaccine;
 
-import com.example.pet_adoption.domain.vaccine.dto.DtoNewVaccine;
-import com.example.pet_adoption.domain.vaccine.dto.DtoUpdateVaccine;
+import com.example.pet_adoption.domain.vaccine.dto.VaccineRequest;
+import com.example.pet_adoption.domain.vaccine.dto.VaccineUpdateRequest;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 
@@ -27,12 +27,12 @@ public class Vaccine{
         this.targetSpecie = targetSpecie;
     }
 
-    public Vaccine(DtoNewVaccine newVaccine) {
+    public Vaccine(VaccineRequest newVaccine) {
         this.name = newVaccine.name();
         this.targetSpecie = newVaccine.targetSpecie();
     }
 
-    public void updateInfos(@Valid DtoUpdateVaccine vaccineUpdated) {
+    public void updateInfos(@Valid VaccineUpdateRequest vaccineUpdated) {
         this.name = vaccineUpdated.name();
         this.targetSpecie = getTargetSpecie();
     }

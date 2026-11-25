@@ -3,6 +3,8 @@ package com.example.pet_adoption.domain.pet;
 import com.example.pet_adoption.domain.accounts.User;
 import com.example.pet_adoption.domain.address.Address;
 import com.example.pet_adoption.domain.adoption.Adoption;
+import com.example.pet_adoption.domain.pet.dto.DogRequest;
+import com.example.pet_adoption.domain.pet.dto.PetRequest;
 import com.example.pet_adoption.domain.pet.pet_enums.Castration;
 import com.example.pet_adoption.domain.pet.pet_enums.GeneralTraits;
 import com.example.pet_adoption.domain.pet.pet_enums.PetGenre;
@@ -32,7 +34,7 @@ public abstract class Pet {
 
     private String description;
 
-    private Float weight;
+    private Double weight;
 
     private LocalDate birth;
 
@@ -52,9 +54,6 @@ public abstract class Pet {
     @Enumerated(EnumType.STRING)
     @Column(name = "trait")
     private Set<GeneralTraits> generalTraits = new HashSet<>();
-
-    @Embedded
-    private Address address;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "adoption_id", nullable = false)
@@ -79,9 +78,9 @@ public abstract class Pet {
     protected Pet(){}
 
     public Pet(
-            String name, String description, Float weight, LocalDate birth,
+            String name, String description, Double weight, LocalDate birth,
             boolean estimatedBirth, PetGenre genre, Castration castration,
-            Set<GeneralTraits> generalTraits, Address address, Adoption adoption,
+            Set<GeneralTraits> generalTraits, Adoption adoption,
             List<PetVaccine> vaccinations, List<String> photoUrls) {
         this.name = name;
         this.description = description;
@@ -91,10 +90,21 @@ public abstract class Pet {
         this.genre = genre;
         this.castration = castration;
         this.generalTraits = generalTraits;
-        this.address = address;
         this.adoption = adoption;
         this.vaccinations = vaccinations;
         this.photoUrls = photoUrls;
+    }
+
+    public Pet(PetRequest petRequest) {
+        this.name = petRequest.name();
+        this.description= petRequest.description();
+        this.weight = petRequest.weight();
+        this.birth = petRequest.birth();
+        this.estimatedBirth = petRequest.estimatedBirth();
+        this.genre = petRequest.genre();
+        this.castration = petRequest.castration();
+        this.generalTraits = petRequest.generalTraits();
+        this.photoUrls = new ArrayList<>(petRequest.photoUrls());
     }
 
     @Transient
@@ -114,7 +124,7 @@ public abstract class Pet {
 
     public abstract TargetSpecie getTargetSpecies();
 
-    public void AddVaccination(
+    public void addVaccination(
             Vaccine vaccine, LocalDate appliedAt, LocalDate nextDoseAt
     ){
         if (vaccine.getTargetSpecie() != this.getTargetSpecies()
@@ -144,7 +154,7 @@ public abstract class Pet {
         return description;
     }
 
-    public Float getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
@@ -168,16 +178,16 @@ public abstract class Pet {
         return generalTraits;
     }
 
-    public Address getAddress() {
-        return address;
-    }
-
     public Adoption getAdoption() {
         return adoption;
     }
 
     public List<PetVaccine> getVaccination() {
         return vaccinations;
+    }
+
+    public List<String> getPhotoUrls() {
+        return photoUrls;
     }
 
     public User getAdopter() {

@@ -2,6 +2,7 @@ package com.example.pet_adoption.domain.pet;
 
 import com.example.pet_adoption.domain.address.Address;
 import com.example.pet_adoption.domain.adoption.Adoption;
+import com.example.pet_adoption.domain.pet.dto.DogRequest;
 import com.example.pet_adoption.domain.pet.pet_enums.*;
 import com.example.pet_adoption.domain.vaccine.PetVaccine;
 import com.example.pet_adoption.domain.vaccine.TargetSpecie;
@@ -31,17 +32,24 @@ public class Dog extends Pet {
     protected Dog(){}
 
     public Dog(
-            String name, String description, Float weight, LocalDate birth,
+            String name, String description, Double weight, LocalDate birth,
             boolean estimatedBirth, PetGenre genre, Castration castration,
-            Set<GeneralTraits> generalTraits, Address address, Adoption adoption,
+            Set<GeneralTraits> generalTraits, Adoption adoption,
             List<PetVaccine> vaccinations, List<String> photoUrls, DogBreed breed,
             Set<DogTraits> dogTraits) {
         super(
                 name, description, weight, birth, estimatedBirth,
-                genre, castration, generalTraits, address, adoption,
+                genre, castration, generalTraits, adoption,
                 vaccinations, photoUrls);
         this.breed = breed;
         this.dogTraits = dogTraits;
+    }
+
+    public Dog(DogRequest dogRequest) {
+        super(dogRequest);
+        this.breed = dogRequest.breed();
+        this.dogTraits = dogRequest.dogTraits();
+
     }
 
     @Override

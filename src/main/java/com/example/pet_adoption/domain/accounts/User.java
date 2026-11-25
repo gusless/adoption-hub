@@ -47,6 +47,14 @@ public class User extends Publisher {
         this.genre = genre;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
     public String getPhotoUrl() {
         return photoUrl;
     }
