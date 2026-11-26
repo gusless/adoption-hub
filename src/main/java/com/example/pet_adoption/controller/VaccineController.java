@@ -58,10 +58,10 @@ public class VaccineController {
     public ResponseEntity<PagedModel<VaccineResponse>> getAllVaccines(
             @PageableDefault(size = 20) Pageable pageable
             ){
-        Page<VaccineResponse> vaccinePage = repository
+        Page<VaccineResponse> page = repository
                 .findAll(pageable)
                 .map(VaccineResponse::new);
-        return ResponseEntity.ok(new PagedModel<>(vaccinePage));
+        return ResponseEntity.ok(new PagedModel<>(page));
     }
 
     @PutMapping("/{id}")

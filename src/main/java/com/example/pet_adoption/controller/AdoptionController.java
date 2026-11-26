@@ -6,6 +6,10 @@ import com.example.pet_adoption.domain.adoption.dto.AdoptionResponse;
 import com.example.pet_adoption.repository.AdoptionRepository;
 import com.example.pet_adoption.service.AdoptionService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,10 +28,10 @@ public class AdoptionController {
     private final AdoptionRepository adoptionRepository;
 
     public AdoptionController(
-            AdoptionService adoptionService,
-            AdoptionRepository adoptionRepository) {
-        this.adoptionService = adoptionService;
-        this.adoptionRepository = adoptionRepository;
+            AdoptionService service,
+            AdoptionRepository repository) {
+        this.adoptionService = service;
+        this.adoptionRepository = repository;
     }
 
     @PostMapping
@@ -52,4 +56,16 @@ public class AdoptionController {
         );
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping
+    @Transactional(readOnly = true)
+    public ResponseEntity<PagedModel<AdoptionResponse>> getAllAdoptions(
+            @PageableDefault(size = 30) Pageable pageable
+    ){
+        Page<AdoptionResponse> page = adoptionRepository
+                .findAll(pageable)
+                .map(AdoptionResponse::new);
+        return ResponseEntity.ok(new PagedModel<>(page));
+    }
+
 }

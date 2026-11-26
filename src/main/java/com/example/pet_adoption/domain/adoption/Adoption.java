@@ -7,10 +7,8 @@ import com.example.pet_adoption.domain.pet.Pet;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "adoptions")
@@ -32,7 +30,7 @@ public class Adoption {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AdoptionStatus status = AdoptionStatus.UP_FOR_ADOPTION;
+    private AdoptionStatus status;
 
     @ElementCollection
     @CollectionTable(
@@ -41,6 +39,8 @@ public class Adoption {
     )
     @OrderBy("changedAt ASC")
     private final List<StatusChange> statusHistory = new ArrayList<>();
+
+    private final LocalDateTime postedAt = LocalDateTime.now();
 
     @Column(length = 2000)
     private String description;
@@ -55,9 +55,11 @@ public class Adoption {
         this.publisher = publisher;
         this.description = description;
         this.address = address;
+        changeStatus(AdoptionStatus.UP_FOR_ADOPTION);
     }
 
     public void changeStatus(AdoptionStatus newStatus){
+        Objects.requireNonNull(newStatus, "O status da adoção não pode ser nulo");
         this.status = newStatus;
         statusHistory.add(new StatusChange(newStatus));
     }
@@ -88,6 +90,10 @@ public class Adoption {
 
     public List<StatusChange> getStatusHistory() {
         return statusHistory;
+    }
+
+    public LocalDateTime getPostedAt() {
+        return postedAt;
     }
 
     public String getDescription() {
